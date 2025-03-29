@@ -1,0 +1,35 @@
+
+.chart-appear {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.chart-appear-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Smooth animations for charts */
+.recharts-layer {
+  transition: transform 0.3s ease-in-out;
+}
+
+.recharts-bar-rectangle {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Performance optimizations */
+.recharts-wrapper {
+  will-change: transform;
+}
+
+.glass-card {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease-in-out;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
