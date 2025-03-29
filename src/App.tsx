@@ -42,7 +42,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 60 * 1000, // 1 minute
       retry: 1,
-      networkMode: 'offlineFirst',
+      networkMode: 'online',
     },
   },
 });
@@ -50,55 +50,53 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <BrowserRouter>
-      <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <AuthProvider>
-              <UserProvider>
-                <React.Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    {/* Public routes that don't use the layout */}
-                    <Route path="/" element={<Index />} />
-                    <Route path="/auth" element={<Auth />} />
-                    
-                    {/* Protected routes with AppLayout */}
-                    <Route element={<AppLayout />}>
-                      <Route 
-                        path="/dashboard" 
-                        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
-                      />
-                      <Route 
-                        path="/grid" 
-                        element={<ProtectedRoute><Grid /></ProtectedRoute>} 
-                      />
-                      <Route 
-                        path="/tasks" 
-                        element={<ProtectedRoute><Tasks /></ProtectedRoute>} 
-                      />
-                      <Route 
-                        path="/goals" 
-                        element={<ProtectedRoute><Goals /></ProtectedRoute>} 
-                      />
-                      <Route 
-                        path="/calendar" 
-                        element={<ProtectedRoute><Calendar /></ProtectedRoute>} 
-                      />
-                      <Route 
-                        path="/settings" 
-                        element={<ProtectedRoute><Settings /></ProtectedRoute>} 
-                      />
-                    </Route>
-                    
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </React.Suspense>
-                <Toaster />
-                <Sonner />
-              </UserProvider>
-            </AuthProvider>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <UserProvider>
+              <React.Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* Public routes that don't use the layout */}
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  
+                  {/* Protected routes with AppLayout */}
+                  <Route element={<AppLayout />}>
+                    <Route 
+                      path="/dashboard" 
+                      element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
+                    />
+                    <Route 
+                      path="/grid" 
+                      element={<ProtectedRoute><Grid /></ProtectedRoute>} 
+                    />
+                    <Route 
+                      path="/tasks" 
+                      element={<ProtectedRoute><Tasks /></ProtectedRoute>} 
+                    />
+                    <Route 
+                      path="/goals" 
+                      element={<ProtectedRoute><Goals /></ProtectedRoute>} 
+                    />
+                    <Route 
+                      path="/calendar" 
+                      element={<ProtectedRoute><Calendar /></ProtectedRoute>} 
+                    />
+                    <Route 
+                      path="/settings" 
+                      element={<ProtectedRoute><Settings /></ProtectedRoute>} 
+                    />
+                  </Route>
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </React.Suspense>
+              <Toaster />
+              <Sonner />
+            </UserProvider>
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   );
 };

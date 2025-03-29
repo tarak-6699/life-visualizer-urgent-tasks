@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { Loader2, Zap, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type LocationState = {
   from?: {
@@ -112,11 +113,24 @@ const Auth = () => {
   };
   
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <Card>
+    <div className="flex min-h-screen items-center justify-center px-4 bg-gradient-to-b from-background to-muted/50">
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-5 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      <div className="w-full max-w-md z-10">
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center justify-center">
+            <Zap className="h-6 w-6 text-primary mr-2" />
+            <span className="font-semibold text-2xl tracking-tight">LifeTracker</span>
+          </Link>
+        </div>
+        
+        <Card className="border-gradient shadow-lg backdrop-blur-sm bg-card/80">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold">LifeTracker</CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome to LifeTracker</CardTitle>
             <CardDescription>Enter your email below to access your account</CardDescription>
           </CardHeader>
           <Tabs defaultValue="sign-in">
@@ -137,28 +151,38 @@ const Auth = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="backdrop-blur-sm bg-background/80"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">Password</Label>
+                      <a href="#" className="text-xs text-primary hover:underline">
+                        Forgot password?
+                      </a>
+                    </div>
                     <Input 
                       id="password" 
                       type="password" 
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      className="backdrop-blur-sm bg-background/80"
                     />
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700" disabled={loading}>
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Please wait
                       </>
                     ) : (
-                      "Sign In"
+                      <>
+                        Sign In
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
                     )}
                   </Button>
                 </CardFooter>
@@ -177,6 +201,7 @@ const Auth = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="backdrop-blur-sm bg-background/80"
                     />
                   </div>
                   <div className="space-y-2">
@@ -187,6 +212,7 @@ const Auth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      className="backdrop-blur-sm bg-background/80"
                     />
                     <p className="text-xs text-muted-foreground">
                       Password must be at least 6 characters.
@@ -194,22 +220,85 @@ const Auth = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700" disabled={loading}>
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Creating account
                       </>
                     ) : (
-                      "Create Account"
+                      <>
+                        Create Account
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
                     )}
                   </Button>
                 </CardFooter>
               </form>
             </TabsContent>
           </Tabs>
+          
+          <div className="px-8 py-4 border-t text-center">
+            <p className="text-sm text-muted-foreground">
+              By continuing, you agree to our{' '}
+              <a href="#" className="underline text-primary">Terms of Service</a>{' '}
+              and{' '}
+              <a href="#" className="underline text-primary">Privacy Policy</a>.
+            </p>
+          </div>
         </Card>
+        
+        <div className="text-center mt-6">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center">
+            <ArrowRight className="mr-2 h-4 w-4 rotate-180" />
+            Back to Home
+          </Link>
+        </div>
       </div>
+      
+      <style>{`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 10s infinite alternate;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .border-gradient {
+          position: relative;
+          border: 1px solid transparent;
+          background-clip: padding-box;
+          box-shadow: 0 0 15px rgba(124, 58, 237, 0.1);
+        }
+        .border-gradient::before {
+          content: '';
+          position: absolute;
+          top: -1px;
+          left: -1px;
+          right: -1px;
+          bottom: -1px;
+          z-index: -1;
+          margin: -1px;
+          border-radius: inherit;
+          background: linear-gradient(to right, rgba(124, 58, 237, 0.2), rgba(124, 58, 237, 0.1));
+        }
+      `}</style>
     </div>
   );
 };
