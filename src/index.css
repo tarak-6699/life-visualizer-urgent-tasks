@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,13 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom grid styling for the week grid */
+.grid-cols-52 {
+  grid-template-columns: repeat(52, minmax(0, 1fr));
+}
+
+html {
+  scroll-behavior: smooth;
 }

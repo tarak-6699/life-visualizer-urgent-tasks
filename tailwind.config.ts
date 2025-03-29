@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,25 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for LifeTracker
+				lifeblue: {
+					light: '#4F8FF0',
+					DEFAULT: '#2563EB',
+					dark: '#1E40AF'
+				},
+				lifepurple: {
+					light: '#A78BFA',
+					DEFAULT: '#8B5CF6',
+					dark: '#6D28D9'
+				},
+				lifeaccent: '#F97316', // Orange accent
+				lifegray: {
+					100: '#F3F4F6',
+					200: '#E5E7EB',
+					300: '#D1D5DB',
+					400: '#9CA3AF',
+					500: '#6B7280'
 				}
 			},
 			borderRadius: {
@@ -84,11 +104,31 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'pulse-soft': {
+					'0%, 100%': {
+						opacity: '1',
+					},
+					'50%': {
+						opacity: '0.85',
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite'
 			}
 		}
 	},
