@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Clock, Target, CheckSquare, Sparkles, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const { user } = useAuth();
@@ -20,6 +20,33 @@ const Index = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Navigation Bar */}
+      <header className="w-full bg-background/80 backdrop-blur-md border-b">
+        <div className="max-w-7xl mx-auto flex h-16 items-center px-4 sm:px-6">
+          <div className="flex items-center mr-4">
+            <span className="font-semibold text-2xl tracking-tight">LifeTracker</span>
+          </div>
+          
+          <div className="flex-1" />
+          
+          {user ? (
+            <Button asChild variant="default">
+              <Link to="/dashboard">
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Go to Dashboard
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="default">
+              <Link to="/auth">
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Sign In
+              </Link>
+            </Button>
+          )}
+        </div>
+      </header>
+      
       {/* Hero Section */}
       <div 
         className="pt-24 pb-20 px-4 md:px-6 text-center relative overflow-hidden border-b"

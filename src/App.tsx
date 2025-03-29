@@ -4,11 +4,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./contexts/UserContext";
 import { AuthProvider } from "./contexts/AuthContext";
-import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AppLayout from "./components/AppLayout";
 
 // Import Dashboard directly to avoid lazy loading issues
 import Dashboard from "./pages/Dashboard";
@@ -47,44 +47,49 @@ const queryClient = new QueryClient({
   },
 });
 
-// ScrollToTop component to ensure page scrolls to top on route change
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  
-  return null;
-};
-
-const AppRoutes = () => (
-  <Suspense fallback={<PageLoader />}>
-    <ScrollToTop />
-    <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/auth" element={<Auth />} />
-      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/grid" element={<ProtectedRoute><Grid /></ProtectedRoute>} />
-      <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
-      <Route path="/goals" element={<ProtectedRoute><Goals /></ProtectedRoute>} />
-      <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </Suspense>
-);
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
           <UserProvider>
-            <Navbar />
-            <main className="min-h-[calc(100vh-4rem)] max-w-[1200px] mx-auto px-4 py-6 sm:px-6 animate-fade-in">
-              <AppRoutes />
-            </main>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* Public routes that don't use the layout */}
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                
+                {/* Protected routes with AppLayout */}
+                <Route element={<AppLayout />}>
+                  <Route 
+                    path="/dashboard" 
+                    element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
+                  />
+                  <Route 
+                    path="/grid" 
+                    element={<ProtectedRoute><Grid /></ProtectedRoute>} 
+                  />
+                  <Route 
+                    path="/tasks" 
+                    element={<ProtectedRoute><Tasks /></ProtectedRoute>} 
+                  />
+                  <Route 
+                    path="/goals" 
+                    element={<ProtectedRoute><Goals /></ProtectedRoute>} 
+                  />
+                  <Route 
+                    path="/calendar" 
+                    element={<ProtectedRoute><Calendar /></ProtectedRoute>} 
+                  />
+                  <Route 
+                    path="/settings" 
+                    element={<ProtectedRoute><Settings /></ProtectedRoute>} 
+                  />
+                </Route>
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
             <Toaster />
             <Sonner />
           </UserProvider>
