@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { 
   LayoutGrid, 
   BarChart, 
@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { isProfileSetup } = useUser();
   const { user, profile, signOut } = useAuth();
 
@@ -36,6 +37,16 @@ const Navbar: React.FC = () => {
   const closeMenu = () => setIsOpen(false);
 
   const isActive = (path: string) => location.pathname === path;
+  
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      closeMenu();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const navLinks = [
     {
@@ -140,7 +151,7 @@ const Navbar: React.FC = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={() => signOut()}
+                onClick={handleSignOut}
                 className="text-red-600 focus:text-red-600"
               >
                 <LogOut className="mr-2 h-4 w-4" />
@@ -149,7 +160,12 @@ const Navbar: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button asChild variant="default" className="ml-4">
+          <Button 
+            asChild 
+            variant="default" 
+            className="ml-4"
+            onClick={() => navigate('/auth')}
+          >
             <Link to="/auth">
               <LogIn className="mr-2 h-4 w-4" />
               Sign In
@@ -204,10 +220,7 @@ const Navbar: React.FC = () => {
             
             {user && (
               <button
-                onClick={() => {
-                  signOut();
-                  closeMenu();
-                }}
+                onClick={handleSignOut}
                 className="flex items-center gap-2 py-2 text-sm font-medium transition-colors hover:text-red-600 text-red-600"
               >
                 <LogOut className="h-5 w-5" />

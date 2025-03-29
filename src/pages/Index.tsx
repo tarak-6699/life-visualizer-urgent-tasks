@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -45,8 +45,10 @@ const Index = () => {
   
   const handleGetStarted = () => {
     if (user) {
+      console.log("User is logged in, navigating to dashboard");
       navigate('/dashboard');
     } else {
+      console.log("User is not logged in, navigating to auth");
       navigate('/auth');
     }
   };
@@ -64,18 +66,22 @@ const Index = () => {
           <div className="flex-1" />
           
           {user ? (
-            <Button asChild variant="default" className="animate-pulse">
-              <Link to="/dashboard">
-                <ArrowRight className="mr-2 h-4 w-4" />
-                Go to Dashboard
-              </Link>
+            <Button 
+              variant="default" 
+              className="animate-pulse"
+              onClick={() => navigate('/dashboard')}
+            >
+              <ArrowRight className="mr-2 h-4 w-4" />
+              Go to Dashboard
             </Button>
           ) : (
-            <Button asChild variant="default" className="hover:scale-105 transition-transform">
-              <Link to="/auth">
-                <ArrowRight className="mr-2 h-4 w-4" />
-                Sign In
-              </Link>
+            <Button 
+              variant="default" 
+              className="hover:scale-105 transition-transform"
+              onClick={() => navigate('/auth')}
+            >
+              <ArrowRight className="mr-2 h-4 w-4" />
+              Sign In
             </Button>
           )}
         </div>
@@ -109,11 +115,20 @@ const Index = () => {
             and build habits that lead to personal fulfillment and success.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center reveal">
-            <Button size="lg" onClick={handleGetStarted} className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 animate-pulse">
+            <Button 
+              size="lg" 
+              onClick={handleGetStarted} 
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 animate-pulse"
+            >
               Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/grid')} className="hover:scale-105 transition-transform">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              onClick={() => navigate('/grid')} 
+              className="hover:scale-105 transition-transform"
+            >
               See Life Visualization
             </Button>
           </div>
