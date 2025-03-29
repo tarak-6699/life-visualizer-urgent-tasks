@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,16 +24,16 @@ const PageLoader = () => (
 );
 
 // Pre-load critical pages
-const Index = lazy(() => import("./pages/Index"));
-const Auth = lazy(() => import("./pages/Auth"));
+const Index = React.lazy(() => import("./pages/Index"));
+const Auth = React.lazy(() => import("./pages/Auth"));
 
 // Use import() directly for other pages to avoid issues with dynamic imports
-const Grid = lazy(() => import("./pages/Grid"));
-const Tasks = lazy(() => import("./pages/Tasks"));
-const Goals = lazy(() => import("./pages/Goals"));
-const Calendar = lazy(() => import("./pages/Calendar"));
-const Settings = lazy(() => import("./pages/Settings"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+const Grid = React.lazy(() => import("./pages/Grid"));
+const Tasks = React.lazy(() => import("./pages/Tasks"));
+const Goals = React.lazy(() => import("./pages/Goals"));
+const Calendar = React.lazy(() => import("./pages/Calendar"));
+const Settings = React.lazy(() => import("./pages/Settings"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Create a query client with optimized settings
 const queryClient = new QueryClient({
@@ -47,56 +47,60 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <UserProvider>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                {/* Public routes that don't use the layout */}
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                
-                {/* Protected routes with AppLayout */}
-                <Route element={<AppLayout />}>
-                  <Route 
-                    path="/dashboard" 
-                    element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
-                  />
-                  <Route 
-                    path="/grid" 
-                    element={<ProtectedRoute><Grid /></ProtectedRoute>} 
-                  />
-                  <Route 
-                    path="/tasks" 
-                    element={<ProtectedRoute><Tasks /></ProtectedRoute>} 
-                  />
-                  <Route 
-                    path="/goals" 
-                    element={<ProtectedRoute><Goals /></ProtectedRoute>} 
-                  />
-                  <Route 
-                    path="/calendar" 
-                    element={<ProtectedRoute><Calendar /></ProtectedRoute>} 
-                  />
-                  <Route 
-                    path="/settings" 
-                    element={<ProtectedRoute><Settings /></ProtectedRoute>} 
-                  />
-                </Route>
-                
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-            <Toaster />
-            <Sonner />
-          </UserProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <BrowserRouter>
+      <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <AuthProvider>
+              <UserProvider>
+                <React.Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    {/* Public routes that don't use the layout */}
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    
+                    {/* Protected routes with AppLayout */}
+                    <Route element={<AppLayout />}>
+                      <Route 
+                        path="/dashboard" 
+                        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} 
+                      />
+                      <Route 
+                        path="/grid" 
+                        element={<ProtectedRoute><Grid /></ProtectedRoute>} 
+                      />
+                      <Route 
+                        path="/tasks" 
+                        element={<ProtectedRoute><Tasks /></ProtectedRoute>} 
+                      />
+                      <Route 
+                        path="/goals" 
+                        element={<ProtectedRoute><Goals /></ProtectedRoute>} 
+                      />
+                      <Route 
+                        path="/calendar" 
+                        element={<ProtectedRoute><Calendar /></ProtectedRoute>} 
+                      />
+                      <Route 
+                        path="/settings" 
+                        element={<ProtectedRoute><Settings /></ProtectedRoute>} 
+                      />
+                    </Route>
+                    
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </React.Suspense>
+                <Toaster />
+                <Sonner />
+              </UserProvider>
+            </AuthProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </React.StrictMode>
+    </BrowserRouter>
+  );
+};
 
 export default App;
