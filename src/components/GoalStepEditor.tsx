@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +6,7 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { DbGoalStep } from '@/types/supabase';
 
 interface GoalStep {
   id?: string;
@@ -19,11 +19,31 @@ interface GoalStep {
 interface GoalStepEditorProps {
   goalId: string;
   existingSteps?: GoalStep[];
+  steps?: DbGoalStep[];
   onSave?: () => void;
+  onCancel?: () => void;
 }
 
-const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps = [], onSave }) => {
-  const [steps, setSteps] = useState<GoalStep[]>(existingSteps);
+const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ 
+  goalId, 
+  existingSteps = [], 
+  steps = [],
+  onSave,
+  onCancel
+}) => {
+  const [localSteps, setLocalSteps] = useState<GoalStep[]>(() => {
+    if (steps && steps.length > 0) {
+      return steps.map(step => ({
+        id: step.id,
+        title: step.title,
+        description: step.description || '',
+        order: step.order,
+        completed: step.completed
+      }));
+    }
+    return existingSteps;
+  });
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
 
@@ -31,29 +51,28 @@ const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps =
     const newStep: GoalStep = {
       title: '',
       description: '',
-      order: steps.length,
+      order: localSteps.length,
       completed: false
     };
-    setSteps([...steps, newStep]);
+    setLocalSteps([...localSteps, newStep]);
   };
 
   const removeStep = (index: number) => {
-    const newSteps = [...steps];
+    const newSteps = [...localSteps];
     newSteps.splice(index, 1);
     
-    // Update order for remaining steps
     const updatedSteps = newSteps.map((step, idx) => ({
       ...step,
       order: idx
     }));
     
-    setSteps(updatedSteps);
+    setLocalSteps(updatedSteps);
   };
 
   const updateStep = (index: number, field: keyof GoalStep, value: string | boolean) => {
-    const newSteps = [...steps];
+    const newSteps = [...localSteps];
     newSteps[index] = { ...newSteps[index], [field]: value };
-    setSteps(newSteps);
+    setLocalSteps(newSteps);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,8 +87,7 @@ const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps =
       return;
     }
 
-    // Validate that all steps have titles
-    const invalidStep = steps.findIndex(step => !step.title.trim());
+    const invalidStep = localSteps.findIndex(step => !step.title.trim());
     if (invalidStep !== -1) {
       toast({
         title: "Invalid step",
@@ -82,16 +100,39 @@ const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps =
     setIsSubmitting(true);
     
     try {
-      // Include user_id in each step
-      const { error } = await supabase
-        .from('goal_steps')
-        .insert(steps.map(step => ({
-          ...step,
-          goal_id: goalId,
-          user_id: user.id // Add this line to include user_id
-        })));
-
-      if (error) throw error;
+      const stepsToUpdate = localSteps.filter(step => step.id);
+      const stepsToInsert = localSteps.filter(step => !step.id);
+      
+      if (stepsToUpdate.length > 0) {
+        for (const step of stepsToUpdate) {
+          const { error } = await supabase
+            .from('goal_steps')
+            .update({
+              title: step.title,
+              description: step.description,
+              order: step.order,
+              completed: step.completed
+            })
+            .eq('id', step.id);
+          
+          if (error) throw error;
+        }
+      }
+      
+      if (stepsToInsert.length > 0) {
+        const { error } = await supabase
+          .from('goal_steps')
+          .insert(stepsToInsert.map(step => ({
+            title: step.title,
+            description: step.description,
+            order: step.order,
+            completed: step.completed,
+            goal_id: goalId,
+            user_id: user.id
+          })));
+  
+        if (error) throw error;
+      }
       
       toast({
         title: "Steps saved",
@@ -114,7 +155,7 @@ const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps =
     <div className="space-y-4">
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
-          {steps.map((step, index) => (
+          {localSteps.map((step, index) => (
             <div key={index} className="space-y-2 p-4 border rounded-md bg-card">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-medium">Step {index + 1}</h3>
@@ -157,13 +198,26 @@ const GoalStepEditor: React.FC<GoalStepEditorProps> = ({ goalId, existingSteps =
             Add Step
           </Button>
           
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isSubmitting || steps.length === 0}
-          >
-            {isSubmitting ? 'Saving...' : 'Save Steps'}
-          </Button>
+          <div className="flex gap-2 w-full">
+            {onCancel && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onCancel}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            )}
+            
+            <Button 
+              type="submit" 
+              className={onCancel ? "flex-1" : "w-full"} 
+              disabled={isSubmitting || localSteps.length === 0}
+            >
+              {isSubmitting ? 'Saving...' : 'Save Steps'}
+            </Button>
+          </div>
         </div>
       </form>
     </div>
