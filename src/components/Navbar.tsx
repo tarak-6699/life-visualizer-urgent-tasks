@@ -48,6 +48,12 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    console.log(`Navigating to: ${path}`);
+    navigate(path);
+    closeMenu();
+  };
+
   const navLinks = [
     {
       path: '/dashboard',
@@ -105,9 +111,9 @@ const Navbar: React.FC = () => {
         <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             (link.showAlways || isProfileSetup || user) && (
-              <Link 
+              <button 
                 key={link.path} 
-                to={link.path}
+                onClick={() => handleNavigation(link.path)}
                 className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
                   isActive(link.path) 
                   ? 'text-primary' 
@@ -116,7 +122,7 @@ const Navbar: React.FC = () => {
               >
                 {link.icon}
                 {link.label}
-              </Link>
+              </button>
             )
           ))}
         </nav>
@@ -143,11 +149,11 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/settings">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </Link>
+              <DropdownMenuItem 
+                onClick={() => handleNavigation('/settings')}
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
@@ -161,15 +167,15 @@ const Navbar: React.FC = () => {
           </DropdownMenu>
         ) : (
           <Button 
-            asChild 
             variant="default" 
             className="ml-4"
-            onClick={() => navigate('/auth')}
+            onClick={() => {
+              console.log("Sign In clicked from navbar");
+              navigate('/auth');
+            }}
           >
-            <Link to="/auth">
-              <LogIn className="mr-2 h-4 w-4" />
-              Sign In
-            </Link>
+            <LogIn className="mr-2 h-4 w-4" />
+            Sign In
           </Button>
         )}
         
@@ -191,10 +197,9 @@ const Navbar: React.FC = () => {
           <nav className="max-w-[80%] mx-auto flex flex-col py-4">
             {navLinks.map((link) => (
               (link.showAlways || isProfileSetup || user) && (
-                <Link
+                <button
                   key={link.path}
-                  to={link.path}
-                  onClick={closeMenu}
+                  onClick={() => handleNavigation(link.path)}
                   className={`flex items-center gap-2 py-2 text-sm font-medium transition-colors hover:text-primary ${
                     isActive(link.path) 
                     ? 'text-primary' 
@@ -203,19 +208,21 @@ const Navbar: React.FC = () => {
                 >
                   {link.icon}
                   {link.label}
-                </Link>
+                </button>
               )
             ))}
             
             {!user && (
-              <Link
-                to="/auth"
-                onClick={closeMenu}
+              <button
+                onClick={() => {
+                  console.log("Sign In clicked from mobile menu");
+                  handleNavigation('/auth');
+                }}
                 className="flex items-center gap-2 py-2 text-sm font-medium transition-colors hover:text-primary"
               >
                 <LogIn className="h-5 w-5" />
                 Sign In / Sign Up
-              </Link>
+              </button>
             )}
             
             {user && (

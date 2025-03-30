@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Clock, 
@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -44,11 +43,12 @@ const Index = () => {
   }, []);
   
   const handleGetStarted = () => {
+    console.log("handleGetStarted clicked, user:", user ? "logged in" : "not logged in");
     if (user) {
-      console.log("User is logged in, navigating to dashboard");
+      console.log("Navigating to dashboard");
       navigate('/dashboard');
     } else {
-      console.log("User is not logged in, navigating to auth");
+      console.log("Navigating to auth");
       navigate('/auth');
     }
   };
@@ -69,7 +69,10 @@ const Index = () => {
             <Button 
               variant="default" 
               className="animate-pulse"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => {
+                console.log("Go to Dashboard clicked");
+                navigate('/dashboard');
+              }}
             >
               <ArrowRight className="mr-2 h-4 w-4" />
               Go to Dashboard
@@ -78,7 +81,10 @@ const Index = () => {
             <Button 
               variant="default" 
               className="hover:scale-105 transition-transform"
-              onClick={() => navigate('/auth')}
+              onClick={() => {
+                console.log("Sign In clicked from header");
+                navigate('/auth');
+              }}
             >
               <ArrowRight className="mr-2 h-4 w-4" />
               Sign In
@@ -126,7 +132,10 @@ const Index = () => {
             <Button 
               size="lg" 
               variant="outline" 
-              onClick={() => navigate('/grid')} 
+              onClick={() => {
+                console.log("See Life Visualization clicked");
+                navigate('/grid');
+              }} 
               className="hover:scale-105 transition-transform"
             >
               See Life Visualization
